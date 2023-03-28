@@ -41,6 +41,26 @@ namespace OpenAI
             Debug.Log("Start to speech to text");
             lock (threadLocker)
             {
+                switch (e.Result.Reason)
+                {
+                    case ResultReason.RecognizedSpeech:
+                        Debug.Log($"RECOGNIZED: Text={e.Result.Text}");
+                        break;
+                    case ResultReason.NoMatch:
+                        Debug.Log($"NOMATCH: Speech could not be recognized.");
+                        break;
+                    case ResultReason.Canceled:
+                        var cancellation = CancellationDetails.FromResult(e.Result);
+                        Debug.Log($"CANCELED: Reason={cancellation.Reason}");
+
+                        if (cancellation.Reason == CancellationReason.Error)
+                        {
+                            Debug.Log($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                            Debug.Log($"CANCELED: ErrorDetails={cancellation.ErrorDetails}");
+                            Debug.Log($"CANCELED: Did you set the speech resource key and region values?");
+                        }
+                        break;
+                }
                 message = e.Result.Text;
                 isMessageOver = true;
                 
@@ -57,7 +77,7 @@ namespace OpenAI
         }
 
         // 开始录音
-        public async void Recording()
+        public async void OpenMic()
         {
             Debug.Log("Start recording");
             using var audioConfig = AudioConfig.FromDefaultMicrophoneInput();

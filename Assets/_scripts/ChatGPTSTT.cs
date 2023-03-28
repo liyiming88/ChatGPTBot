@@ -83,7 +83,7 @@ namespace OpenAI
         private void Start()
         {
             // 程序开始时录音
-            SpeechToText.Speechy.Recording();
+            SpeechToText.Speechy.OpenMic();
         }
 
         void Awake()
